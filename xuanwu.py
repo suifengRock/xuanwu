@@ -35,6 +35,31 @@ widget_types = set([
     "userselect",
 ])
 
+thrift_keyword = set([
+	"label",
+	"baseurl",
+	"listedfields",
+	"search",
+	"dm",
+	"widget",
+	"hidden",
+	"requiredmsg",
+	"binddata",
+	"maxlength",
+	"disabled",
+	"readonly",
+	"placeholder",
+	"index",
+	"stringlist",
+	"summary",
+	"rule",
+	"tolist",
+	"rulemsg",
+	"viewurl",
+	"enums",
+	"filterfields",
+])
+
 typedef = dict()
 typedef_tpl = '''
 package $namespace
@@ -166,6 +191,12 @@ def transform_field(field, indent=0):
 class ListField:
 	pass
 
+def check_keyword(field):
+	for attr in field.annotations:
+		if not attr.name.value.lower() in thrift_keyword:
+			raise Exception(thrift_file + " " + field.name.value + " has invalid attr type: " + attr.name.value.lower())
+
+
 def transform_struct(obj):
 	idField = obj.fields[0]
 	add_properties(idField)
@@ -177,6 +208,7 @@ def transform_struct(obj):
 		field.type = str(field.type)
 		field.widget_type = get_widget_type(field)
 		obj.fieldMap[field.name.value] = field
+		check_keyword(field)
 
 	obj.imports = ["bytes", "fmt"]
 	obj.listedFieldStrings = []
