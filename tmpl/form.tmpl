@@ -184,15 +184,22 @@ func (o *$obj.name.value) ${field.name.value}Widget() *Widget {
 			#if not hasattr($field, "stringList")
 			StringList : o.$field.name.value,
 			#end if
+
 		#else
 		Change go.tmpl go support $field.type now!
 		#end if
 			Name: "$field.name.value",
 			PlaceHolder: "$field.placeholder",
 			Type: "$field.widget_type",
+
 		#if hasattr($field, "enums")
+			#if $field.widget_type == "msgNotice"
+			EnumKey: notice.MsgNoticeKey,
+			EnumData: notice.MsgNoticeLabel,
+			#else
 			EnumKey : $(filename).$(field.enums)Key,
 			EnumData : $(filename).$(field.enums)Label,
+			#end if
 		#else if hasattr($field, "stringList")
 			StringList : $(filename).$field.stringList,
 		#else if hasattr($field, "bindData")
@@ -213,6 +220,12 @@ func (o *$obj.name.value) ${field.name.value}Widget() *Widget {
 		#end if
 		#if hasattr($field, "readonly")
 		        Readonly: $field.readonly,
+		#end if
+		#if hasattr($field, "title")
+		        Title: o.$field.title,
+		#end if
+		#if hasattr($field, "content")
+		        Content: o.$field.content,
 		#end if
 		}
 		if o.widgets == nil {

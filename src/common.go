@@ -32,6 +32,8 @@ type Widget struct {
 	ErrorMsg       string
 	EnumKey        []int32
 	EnumData       map[int32]string
+	MsgKey         []int32
+	MsgData        map[int32]string
 	StringList     []string
 	Required       bool
 	Disabled       bool

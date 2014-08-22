@@ -7,6 +7,11 @@ import (
 	"$item"
 	#end for
 
+	// notice libs
+	#if $obj.hasNotice 
+	"zfw/notice"
+	#end if
+
 	//3rd party libs
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"

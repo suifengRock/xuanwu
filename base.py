@@ -44,6 +44,7 @@ widget_types = set([
 	"textarea",
 	"time",
 	"userselect",
+	"msgNotice",
 ])
 
 supported_annotations = set([
@@ -80,6 +81,10 @@ supported_annotations = set([
 	"viewTpl",
 	"viewUrl",
 	"widget",
+	"title",
+	"content",
+	"msgNotice",
+	"receiver",
 ])
 
 typedef = dict()
@@ -150,6 +155,10 @@ def get_widget_type(obj, field):
 			if not att.value.value in widget_types:
 				raise Exception(thrift_file + " " + obj.name.value + ":" +
 					field.name.value + " has invalid widget type: " + att.value.value)
+			if att.value.value == "msgNotice":
+				if not hasattr(field, "content"):
+					raise Exception(thrift_file + " " + obj.name.value + ":" +
+						field.name.value + ": the widget tyle 'msgNotice' must be have annotations 'content'")
 			return att.value.value
 		if att.name.value.lower() == "dm":
 			field.placeholder = att.value.value

@@ -97,6 +97,21 @@ def transform_module(module):
 			if hasattr(idField, "perm"):
 				obj.perm = idField.perm
 
+			if hasattr(idField, "msgNotice"):
+				obj.msgNotice = idField.msgNotice
+				for i in obj.fields:
+					if str(i.name) == idField.msgNotice:
+						obj.receiver = i.receiver
+						if hasattr(i, "title"):
+							obj.title = i.title
+						else:
+							obj.title = idField.label +" 新信息"
+						obj.content = i.content
+				for i in obj.fields:
+					if str(i.name) == obj.receiver:
+						if i.type == "list<string>":
+							obj.receiverIsList = True 
+
 			obj.imports.add("admin/permission")
 			obj.hasUser = len([i for i in obj.fields if str(i.name) == "UsersID"]) > 0
 

@@ -44,10 +44,11 @@ def struct_import(obj):
 			obj.imports.add("regexp")
 
 		if hasattr(field, "stringList") or hasattr(field, "enums"):
-			import_module = filename
-			if src_path:
-				import_module = src_path + "/" + import_module
-			obj.imports.add(import_module)
+			if field.widget_type !="msgNotice":
+				import_module = filename
+				if src_path:
+					import_module = src_path + "/" + import_module
+				obj.imports.add(import_module)
 
 		if field.type in ["i32", "i64", "bool", "double"] and field.widget_type not in ["date", "time", "datetime"]:
 			obj.imports.add("strconv")
@@ -75,6 +76,8 @@ def struct_import(obj):
 
 
 def transform_struct(obj):
+	if hasattr(obj.fields[0], "msgNotice"):
+		obj.hasNotice = True
 	struct_import(obj)
 	tpl = open('tmpl/go.tmpl', 'r').read()
 	t = Template(tpl, searchList=[{"namespace": namespace, "filename": filename, "obj": obj}])

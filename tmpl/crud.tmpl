@@ -25,6 +25,10 @@ import (
 	"zfw/models"
 	"github.com/sipin/web"
 	"labix.org/v2/mgo/bson"
+
+	#if $obj.msgNotice != None
+	"admin/bulletin"
+	#end if
 )
 
 var (
@@ -37,9 +41,13 @@ type $(className)Context struct {
 	*admin.AdminContext
 }
 
+
 func (c *$(className)Context) Create(ctx *web.Context) (newContext web.IContext) {
 	a := &$(className)Context{}
 	a.AdminContext = &admin.AdminContext{Context: ctx}
+	#if $obj.msgNotice != None
+	fmt.Println("$obj.msgNotice")
+	#end if
 	return a
 }
 
@@ -73,6 +81,42 @@ func init() {
 	#end if
 	#end for
 }
+
+#if $obj.msgNotice != None
+func msgNotice(obj *models.Teacher) (err error) {
+	for _, key := range obj.$obj.msgNotice {
+
+		if key == "0" {
+
+			#if hasattr($obj,"receiverIsList") 
+				for _, val :=range obj.$obj.receiver {
+					err = bulletin.NotificationSend("$obj.title", val, "$(urlBase)	/view?id="+obj.ID.Hex())
+					if err != nil {
+						return
+					}
+				}	 
+			#else
+				err = bulletin.NotificationSend("$obj.title", obj.$obj.receiver, "$(urlBase)	/view?id="+obj.ID.Hex())
+				if err != nil {
+					return
+				}
+			#end if
+			
+			continue
+		}
+		if key == "1" {
+			//即时通讯
+			continue
+		}
+		if key == "2" {
+			//手机短信
+			continue
+		}
+	}
+	return
+}
+#end if
+
 
 #if $obj.search != None
 func getSearch$(className)(current *models.Users, q string, params map[string]string, limit int, offset int, sortFields []string) (objs []*models.$(className), total int) {
@@ -286,6 +330,11 @@ func $(className)CreatePost(ctx *$(className)Context) (html string) {
 #end if
 
 	obj.Save()
+
+	#if $obj.msgNotice != None
+	msgNotice(obj)
+	#end if
+
 	ctx.ClearSession("$(className)Create")
 	ctx.SetFlashNotice("保存成功")
 	ctx.Redirect("index")
@@ -362,6 +411,9 @@ func $(className)EditPost(ctx *$(className)Context) (html string) {
 	}
 
 	obj.Save()
+	#if $obj.msgNotice != None
+	msgNotice(obj)
+	#end if
 	ctx.ClearSession("$(className)Edit")
 	ctx.SetFlashNotice("修改成功")
 
