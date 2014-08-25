@@ -96,6 +96,11 @@ def transform_module(module):
 		if urlBase == "":
 			continue
 
+		for field in obj.fields:
+			for att in field.annotations:
+				if att.value.value == "msgNotice":
+					obj.msgNotice = True
+
 		if obj.label != obj.name.value:
 			obj.perm = obj.label
 			if hasattr(idField, "perm"):

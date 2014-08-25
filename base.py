@@ -43,6 +43,7 @@ widget_types = set([
 	"textarea",
 	"time",
 	"userselect",
+	"msgNotice",
 ])
 
 supported_annotations = set([
