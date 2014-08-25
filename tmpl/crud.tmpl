@@ -34,11 +34,22 @@ var (
 	Perm_$(className) = permission.New("$obj.scope", "$(obj.perm)")
 	Perm_$(className)_Export = permission.New("$obj.scope.$(obj.perm)", "导出")
 	Perm_$(className)_Print = permission.New("$obj.scope.$(obj.perm)", "打印")
+
 )
 
 type $(className)Context struct {
 	*admin.AdminContext
 }
+
+#if hasattr($obj, "msgNotice")
+func $(className)CreateSaveAffter(obj xuanwu.IXuanWuObj) {
+	
+}
+
+func $(className)EditSaveAffter(obj xuanwu.IXuanWuObj) {
+	
+}
+#end if
 
 func (c *$(className)Context) Create(ctx *web.Context) (newContext web.IContext) {
 	a := &$(className)Context{}
@@ -75,6 +86,11 @@ func init() {
 	web.Get("$(urlBase)/relate/$field.name", $(className)$(field.name)Relate)
 	#end if
 	#end for
+
+	#if hasattr($obj, "msgNotice")
+	m_$(modelsNamespace).$(className)AddInsertCallback($(className)CreateSaveAffter)
+	m_$(modelsNamespace).$(className)AddUpdateCallback($(className)EditSaveAffter)
+	#end if
 }
 
 #if $obj.search != None
@@ -300,6 +316,8 @@ func $(className)CreatePost(ctx *$(className)Context) (html string) {
 	ctx.Redirect("index")
 	return
 }
+
+
 
 func $(className)View(ctx *$(className)Context) (html string) {
 	obj, err := m_$(modelsNamespace).$(className)FindByID(ctx.Params["id"])
